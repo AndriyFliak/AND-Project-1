@@ -55,7 +55,7 @@ public class ArtistsTask extends AsyncTask<Void, Void, ArrayList<Artist>> {
     protected void onPostExecute(ArrayList<Artist> artistsList) {
         super.onPostExecute(artistsList);
         if (artistsList == null) {
-            Toast.makeText(mActivity, "No results", Toast.LENGTH_LONG).show();
+            Toast.makeText(mActivity, R.string.no_results, Toast.LENGTH_LONG).show();
         } else {
             ListView artistsListView = (ListView) mActivity.findViewById(R.id.artists_list_view);
             artistsListView.setAdapter(new ArtistsAdapter(mActivity, R.layout.list_item_artist, artistsList));

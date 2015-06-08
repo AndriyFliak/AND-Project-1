@@ -15,6 +15,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/tracks_list_view"
         tools:listitem="@layout/list_item_track"
-        android:divider="#67808080"
+        android:divider="@color/divider"
         android:dividerHeight="1dp" />
 </LinearLayout>

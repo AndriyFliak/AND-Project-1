@@ -6,12 +6,8 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/artist_image"
-        android:minHeight="80dp"
-        android:minWidth="80dp"
-        android:layout_margin="5dp" />
+        style="@style/Icons" />
 
     <TextView
         android:layout_width="0dp"

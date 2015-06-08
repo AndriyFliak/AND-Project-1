@@ -5,6 +5,7 @@
     <string name="artist_text_view">Artist</string>
     <string name="country_setting">Country</string>
     <string name="country_setting_dialog">Select country</string>
+    <string name="no_results">No results</string>
 
     <string-array name="country_entries">
         <item>Andorra</item>

@@ -26,6 +26,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/artists_list_view"
         tools:listitem="@layout/list_item_artist"
-        android:divider="#67808080"
+        android:divider="@color/divider"
         android:dividerHeight="1dp" />
 </LinearLayout>
