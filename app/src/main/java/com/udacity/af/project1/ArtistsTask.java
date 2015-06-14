@@ -12,7 +12,7 @@ import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.models.ArtistsPager;
 import retrofit.RetrofitError;
 
-public class ArtistsTask extends AsyncTask<Void, Void, ArrayList<Artist>> {
+class ArtistsTask extends AsyncTask<Void, Void, ArrayList<Artist>> {
 
     private final Activity mActivity;
     private final ListView mArtistsList;
@@ -56,7 +56,7 @@ public class ArtistsTask extends AsyncTask<Void, Void, ArrayList<Artist>> {
         if (artistsList == null) {
             Toast.makeText(mActivity, R.string.no_results, Toast.LENGTH_LONG).show();
         } else {
-            mArtistsList.setAdapter(new ArtistsAdapter(mActivity, R.layout.list_item_artist, artistsList));
+            mArtistsList.setAdapter(new ArtistsAdapter(mActivity, artistsList));
         }
     }
 }

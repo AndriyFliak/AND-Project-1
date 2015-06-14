@@ -33,7 +33,7 @@ public class TracksFragment extends Fragment implements Preference.OnPreferenceC
         if (savedInstanceState != null) {
             ArrayList<Track> tracks = savedInstanceState.getParcelableArrayList("tracks");
             if (tracks != null) {
-                TracksAdapter adapter = new TracksAdapter(getActivity(), R.layout.list_item_track, tracks);
+                TracksAdapter adapter = new TracksAdapter(getActivity(), tracks);
                 tracksList.setAdapter(adapter);
             }
         } else {

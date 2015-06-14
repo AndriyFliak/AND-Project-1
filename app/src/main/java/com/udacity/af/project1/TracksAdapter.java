@@ -15,12 +15,12 @@ import java.util.ArrayList;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class TracksAdapter extends ArrayAdapter<Track> {
+class TracksAdapter extends ArrayAdapter<Track> {
 
     private final ArrayList<Track> mTracks;
 
-    public TracksAdapter(Context context, int resource, ArrayList<Track> objects) {
-        super(context, resource, objects);
+    public TracksAdapter(Context context, ArrayList<Track> objects) {
+        super(context, R.layout.list_item_track, objects);
         mTracks = objects;
     }
 

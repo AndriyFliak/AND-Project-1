@@ -15,12 +15,12 @@ import java.util.ArrayList;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 
-public class ArtistsAdapter extends ArrayAdapter<Artist> {
+class ArtistsAdapter extends ArrayAdapter<Artist> {
 
     private final ArrayList<Artist> mArtists;
 
-    public ArtistsAdapter(Context context, int resource, ArrayList<Artist> objects) {
-        super(context, resource, objects);
+    public ArtistsAdapter(Context context, ArrayList<Artist> objects) {
+        super(context, R.layout.list_item_artist, objects);
         mArtists = objects;
     }
 

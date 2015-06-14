@@ -49,7 +49,7 @@ public class ArtistsFragment extends Fragment {
         if (savedInstanceState != null) {
             ArrayList<Artist> artists = savedInstanceState.getParcelableArrayList("artists");
             if (artists != null) {
-                ArtistsAdapter adapter = new ArtistsAdapter(getActivity(), R.layout.list_item_artist, artists);
+                ArtistsAdapter adapter = new ArtistsAdapter(getActivity(), artists);
                 artistsList.setAdapter(adapter);
             }
         }

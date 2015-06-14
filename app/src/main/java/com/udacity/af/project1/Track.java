@@ -49,7 +49,7 @@ public class Track implements Parcelable {
         dest.writeStringArray(new String[] { mTrackName, mAlbumName, mImageUrlLarge, mImageUrlSmall, mPreviewUrl } );
     }
 
-    public Track(Parcel in){
+    private Track(Parcel in){
         String[] data = new String[5];
         in.readStringArray(data);
         mTrackName = data[0];

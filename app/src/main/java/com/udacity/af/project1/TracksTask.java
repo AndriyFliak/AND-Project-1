@@ -17,7 +17,7 @@ import kaaes.spotify.webapi.android.models.Image;
 import kaaes.spotify.webapi.android.models.Tracks;
 import retrofit.RetrofitError;
 
-public class TracksTask extends AsyncTask<Void, Void, ArrayList<Track>> {
+class TracksTask extends AsyncTask<Void, Void, ArrayList<Track>> {
 
     private final Activity mActivity;
     private final ListView mTracksList;
@@ -84,7 +84,7 @@ public class TracksTask extends AsyncTask<Void, Void, ArrayList<Track>> {
         if (tracksList == null) {
             Toast.makeText(mActivity, R.string.no_results, Toast.LENGTH_LONG).show();
         } else {
-            mTracksList.setAdapter(new TracksAdapter(mActivity, R.layout.list_item_artist, tracksList));
+            mTracksList.setAdapter(new TracksAdapter(mActivity, tracksList));
         }
     }
 }
