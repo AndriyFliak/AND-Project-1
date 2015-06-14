@@ -12,6 +12,9 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 public class TracksAdapter extends ArrayAdapter<Track> {
 
     private final ArrayList<Track> mTracks;
@@ -26,10 +29,7 @@ public class TracksAdapter extends ArrayAdapter<Track> {
         ViewHolder holder;
         if (convertView == null) {
             convertView = ((LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.list_item_track, null);
-            holder = new ViewHolder();
-            holder.trackName = (TextView)convertView.findViewById(R.id.track_name);
-            holder.albumName = (TextView)convertView.findViewById(R.id.album_name);
-            holder.image = (ImageView)convertView.findViewById(R.id.artist_image);
+            holder = new ViewHolder(convertView);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -42,9 +42,13 @@ public class TracksAdapter extends ArrayAdapter<Track> {
     }
 
     static class ViewHolder {
-        TextView trackName;
-        TextView albumName;
-        ImageView image;
+        @InjectView(R.id.track_name) TextView trackName;
+        @InjectView(R.id.album_name) TextView albumName;
+        @InjectView(R.id.artist_image) ImageView image;
+
+        public ViewHolder(View view) {
+            ButterKnife.inject(this, view);
+        }
     }
 
     public ArrayList<Track> getTracks() {

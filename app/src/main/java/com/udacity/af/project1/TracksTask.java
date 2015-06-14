@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
-import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Image;
 import kaaes.spotify.webapi.android.models.Tracks;
 import retrofit.RetrofitError;
@@ -21,10 +20,12 @@ import retrofit.RetrofitError;
 public class TracksTask extends AsyncTask<Void, Void, ArrayList<Track>> {
 
     private final Activity mActivity;
+    private final ListView mTracksList;
     private final String mSpotifyId;
 
-    TracksTask(Activity activity, String spotifyId) {
+    TracksTask(Activity activity, ListView tracksListView, String spotifyId) {
         mActivity = activity;
+        mTracksList = tracksListView;
         mSpotifyId = spotifyId;
     }
 
@@ -33,19 +34,16 @@ public class TracksTask extends AsyncTask<Void, Void, ArrayList<Track>> {
         if (!Utils.isNetworkAvailable(mActivity)) {
             return null;
         }
-        SpotifyApi api = new SpotifyApi();
-        SpotifyService spotify = api.getService();
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mActivity);
+        String countryPref = sharedPref.getString("pref_country", "US");
+        if (countryPref.equals("0")) {
+            countryPref = "US";
+        }
+        Map<String, Object> queryParams = new HashMap<>(1);
+        queryParams.put("country", countryPref);
         Tracks results;
         try {
-            Map<String, Object> queryParams = new HashMap<>(1);
-
-            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(mActivity);
-            String countryPref = sharedPref.getString("pref_country", "US");
-            if (countryPref.equals("0")) {
-                countryPref = "US";
-            }
-            queryParams.put("country", countryPref);
-            results = spotify.getArtistTopTrack(mSpotifyId, queryParams);
+            results = new SpotifyApi().getService().getArtistTopTrack(mSpotifyId, queryParams);
         } catch (RetrofitError error) {
             return null;
         }
@@ -86,8 +84,7 @@ public class TracksTask extends AsyncTask<Void, Void, ArrayList<Track>> {
         if (tracksList == null) {
             Toast.makeText(mActivity, R.string.no_results, Toast.LENGTH_LONG).show();
         } else {
-            ListView tracksListView = (ListView) mActivity.findViewById(R.id.tracks_list_view);
-            tracksListView.setAdapter(new TracksAdapter(mActivity, R.layout.list_item_artist, tracksList));
+            mTracksList.setAdapter(new TracksAdapter(mActivity, R.layout.list_item_artist, tracksList));
         }
     }
 }

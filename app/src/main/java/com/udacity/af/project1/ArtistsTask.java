@@ -9,17 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
-import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.ArtistsPager;
 import retrofit.RetrofitError;
 
 public class ArtistsTask extends AsyncTask<Void, Void, ArrayList<Artist>> {
 
     private final Activity mActivity;
+    private final ListView mArtistsList;
     private final String mQuery;
 
-    ArtistsTask(Activity activity, String query) {
+    ArtistsTask(Activity activity, ListView artistsList, String query) {
         mActivity = activity;
+        mArtistsList = artistsList;
         mQuery = query;
     }
 
@@ -28,11 +29,9 @@ public class ArtistsTask extends AsyncTask<Void, Void, ArrayList<Artist>> {
         if (!Utils.isNetworkAvailable(mActivity)) {
             return null;
         }
-        SpotifyApi api = new SpotifyApi();
-        SpotifyService spotify = api.getService();
         ArtistsPager results;
         try {
-            results = spotify.searchArtists(mQuery);
+            results = new SpotifyApi().getService().searchArtists(mQuery);
         } catch (RetrofitError error) {
             return null;
         }
@@ -57,8 +56,7 @@ public class ArtistsTask extends AsyncTask<Void, Void, ArrayList<Artist>> {
         if (artistsList == null) {
             Toast.makeText(mActivity, R.string.no_results, Toast.LENGTH_LONG).show();
         } else {
-            ListView artistsListView = (ListView) mActivity.findViewById(R.id.artists_list_view);
-            artistsListView.setAdapter(new ArtistsAdapter(mActivity, R.layout.list_item_artist, artistsList));
+            mArtistsList.setAdapter(new ArtistsAdapter(mActivity, R.layout.list_item_artist, artistsList));
         }
     }
 }

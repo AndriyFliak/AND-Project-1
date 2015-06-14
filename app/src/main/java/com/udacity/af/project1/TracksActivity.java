@@ -9,7 +9,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
 public class TracksActivity extends AppCompatActivity {
+
+    @InjectView(R.id.artist_name) TextView artistName;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -18,12 +23,14 @@ public class TracksActivity extends AppCompatActivity {
 
         Artist artist = getIntent().getParcelableExtra("artist");
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setDisplayShowCustomEnabled(true);
-        actionBar.setDisplayShowTitleEnabled(false);
-        View actionBarView = getLayoutInflater().inflate(R.layout.tracks_fragment_actionbar, null);
-        TextView artistName = (TextView) actionBarView.findViewById(R.id.artist_name);
-        artistName.setText(artist.getName());
-        actionBar.setCustomView(actionBarView);
+        if (actionBar != null) {
+            actionBar.setDisplayShowCustomEnabled(true);
+            actionBar.setDisplayShowTitleEnabled(false);
+            View actionBarView = getLayoutInflater().inflate(R.layout.tracks_fragment_actionbar, null);
+            ButterKnife.inject(this, actionBarView);
+            artistName.setText(artist.getName());
+            actionBar.setCustomView(actionBarView);
+        }
     }
 
 
