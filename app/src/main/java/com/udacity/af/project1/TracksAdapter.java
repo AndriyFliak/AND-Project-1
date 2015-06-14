@@ -23,20 +23,28 @@ public class TracksAdapter extends ArrayAdapter<Track> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = convertView;
+        ViewHolder holder;
         if (convertView == null) {
-            view = ((LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.list_item_track, null);
+            convertView = ((LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.list_item_track, null);
+            holder = new ViewHolder();
+            holder.trackName = (TextView)convertView.findViewById(R.id.track_name);
+            holder.albumName = (TextView)convertView.findViewById(R.id.album_name);
+            holder.image = (ImageView)convertView.findViewById(R.id.artist_image);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
 
-        TextView trackName = (TextView)view.findViewById(R.id.track_name);
-        trackName.setText(mTracks.get(position).getTrackName());
+        holder.trackName.setText(mTracks.get(position).getTrackName());
+        holder.albumName.setText(mTracks.get(position).getAlbumName());
+        Picasso.with(getContext()).load(mTracks.get(position).getImageUrlSmall()).into(holder.image);
+        return convertView;
+    }
 
-        TextView albumName = (TextView)view.findViewById(R.id.album_name);
-        albumName.setText(mTracks.get(position).getAlbumName());
-
-        ImageView image = (ImageView)view.findViewById(R.id.artist_image);
-        Picasso.with(getContext()).load(mTracks.get(position).getImageUrlSmall()).into(image);
-        return view;
+    static class ViewHolder {
+        TextView trackName;
+        TextView albumName;
+        ImageView image;
     }
 
     public ArrayList<Track> getTracks() {

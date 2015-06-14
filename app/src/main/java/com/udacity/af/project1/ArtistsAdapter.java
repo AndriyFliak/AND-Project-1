@@ -23,17 +23,25 @@ public class ArtistsAdapter extends ArrayAdapter<Artist> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        View view = convertView;
+        ViewHolder holder;
         if (convertView == null) {
-            view = ((LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.list_item_artist, null);
+            convertView = ((LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.list_item_artist, null);
+            holder = new ViewHolder();
+            holder.name = (TextView)convertView.findViewById(R.id.artist_name);
+            holder.image = (ImageView)convertView.findViewById(R.id.artist_image);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
 
-        TextView name = (TextView)view.findViewById(R.id.artist_name);
-        name.setText(mArtists.get(position).getName());
+        holder.name.setText(mArtists.get(position).getName());
+        Picasso.with(getContext()).load(mArtists.get(position).getImageUrl()).into(holder.image);
+        return convertView;
+    }
 
-        ImageView image = (ImageView)view.findViewById(R.id.artist_image);
-        Picasso.with(getContext()).load(mArtists.get(position).getImageUrl()).into(image);
-        return view;
+    static class ViewHolder {
+        TextView name;
+        ImageView image;
     }
 
     public ArrayList<Artist> getArtists() {
