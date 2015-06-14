@@ -1,8 +1,6 @@
 package com.udacity.af.project1;
 
 import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.Preference;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +14,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnItemClick;
 
-public class TracksFragment extends Fragment implements TracksTask.Callbacks, Preference.OnPreferenceChangeListener {
+public class TracksFragment extends Fragment implements TracksTask.Callbacks {
 
     @InjectView(R.id.tracks_list_view) ListView tracksList;
     @OnItemClick(R.id.tracks_list_view)
@@ -60,14 +58,5 @@ public class TracksFragment extends Fragment implements TracksTask.Callbacks, Pr
         } else {
             this.tracksList.setAdapter(new TracksAdapter(getActivity(), tracksList));
         }
-    }
-
-    @Override
-    public boolean onPreferenceChange(Preference preference, Object newValue) {
-        if (preference instanceof ListPreference) {
-            ListPreference listPref = (ListPreference) preference;
-            preference.setSummary(listPref.getEntries()[listPref.findIndexOfValue((String) newValue)]);
-        }
-        return true;
     }
 }
