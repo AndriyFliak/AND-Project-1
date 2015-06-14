@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,13 +17,17 @@ import retrofit.RetrofitError;
 
 class TracksTask extends AsyncTask<Void, Void, ArrayList<Track>> {
 
+    interface Callbacks {
+        void onPostExecute(ArrayList<Track> tracksList);
+    }
+
     private final Activity mActivity;
-    private final ListView mTracksList;
+    private final Callbacks mCallbacks;
     private final String mSpotifyId;
 
-    TracksTask(Activity activity, ListView tracksListView, String spotifyId) {
+    TracksTask(Activity activity, Callbacks callbacks, String spotifyId) {
         mActivity = activity;
-        mTracksList = tracksListView;
+        mCallbacks = callbacks;
         mSpotifyId = spotifyId;
     }
 
@@ -81,10 +83,6 @@ class TracksTask extends AsyncTask<Void, Void, ArrayList<Track>> {
     @Override
     protected void onPostExecute(ArrayList<Track> tracksList) {
         super.onPostExecute(tracksList);
-        if (tracksList == null) {
-            Toast.makeText(mActivity, R.string.no_results, Toast.LENGTH_LONG).show();
-        } else {
-            mTracksList.setAdapter(new TracksAdapter(mActivity, tracksList));
-        }
+        mCallbacks.onPostExecute(tracksList);
     }
 }

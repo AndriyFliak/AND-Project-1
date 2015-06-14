@@ -2,8 +2,6 @@ package com.udacity.af.project1;
 
 import android.app.Activity;
 import android.os.AsyncTask;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,13 +12,17 @@ import retrofit.RetrofitError;
 
 class ArtistsTask extends AsyncTask<Void, Void, ArrayList<Artist>> {
 
+    interface Callbacks {
+        void onPostExecute(ArrayList<Artist> artistsList);
+    }
+
     private final Activity mActivity;
-    private final ListView mArtistsList;
+    private final Callbacks mCallbacks;
     private final String mQuery;
 
-    ArtistsTask(Activity activity, ListView artistsList, String query) {
+    ArtistsTask(Activity activity, Callbacks callbacks, String query) {
         mActivity = activity;
-        mArtistsList = artistsList;
+        mCallbacks = callbacks;
         mQuery = query;
     }
 
@@ -53,10 +55,6 @@ class ArtistsTask extends AsyncTask<Void, Void, ArrayList<Artist>> {
     @Override
     protected void onPostExecute(ArrayList<Artist> artistsList) {
         super.onPostExecute(artistsList);
-        if (artistsList == null) {
-            Toast.makeText(mActivity, R.string.no_results, Toast.LENGTH_LONG).show();
-        } else {
-            mArtistsList.setAdapter(new ArtistsAdapter(mActivity, artistsList));
-        }
+        mCallbacks.onPostExecute(artistsList);
     }
 }

@@ -16,7 +16,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnItemClick;
 
-public class TracksFragment extends Fragment implements Preference.OnPreferenceChangeListener {
+public class TracksFragment extends Fragment implements TracksTask.Callbacks, Preference.OnPreferenceChangeListener {
 
     @InjectView(R.id.tracks_list_view) ListView tracksList;
     @OnItemClick(R.id.tracks_list_view)
@@ -26,6 +26,8 @@ public class TracksFragment extends Fragment implements Preference.OnPreferenceC
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setRetainInstance(true);
+
         View view = inflater.inflate(R.layout.fragment_tracks, container, false);
         ButterKnife.inject(this, view);
 
@@ -37,7 +39,7 @@ public class TracksFragment extends Fragment implements Preference.OnPreferenceC
                 tracksList.setAdapter(adapter);
             }
         } else {
-            new TracksTask(getActivity(), tracksList, artist.getSpotifyId()).execute();
+            new TracksTask(getActivity(), this, artist.getSpotifyId()).execute();
         }
 
         return view;
@@ -48,6 +50,15 @@ public class TracksFragment extends Fragment implements Preference.OnPreferenceC
         super.onSaveInstanceState(savedInstanceState);
         if (tracksList != null && tracksList.getAdapter() != null) {
             savedInstanceState.putParcelableArrayList("tracks", ((TracksAdapter) tracksList.getAdapter()).getTracks());
+        }
+    }
+
+    @Override
+    public void onPostExecute(ArrayList<Track> tracksList) {
+        if (tracksList == null) {
+            Toast.makeText(getActivity(), R.string.no_results, Toast.LENGTH_LONG).show();
+        } else {
+            this.tracksList.setAdapter(new TracksAdapter(getActivity(), tracksList));
         }
     }
 
