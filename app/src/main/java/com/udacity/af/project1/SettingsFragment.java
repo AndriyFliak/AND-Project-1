@@ -13,14 +13,14 @@ public class SettingsFragment extends PreferenceFragment {
 
         addPreferencesFromResource(R.xml.preferences);
 
-        ListPreference countryPref = (ListPreference)findPreference("pref_country");
+        ListPreference countryPref = (ListPreference) findPreference("pref_country");
         countryPref.setSummary(countryPref.getEntry());
         countryPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 if (preference instanceof ListPreference) {
                     ListPreference listPref = (ListPreference) preference;
-                    preference.setSummary(listPref.getEntries()[listPref.findIndexOfValue((String)newValue)]);
+                    preference.setSummary(listPref.getEntries()[listPref.findIndexOfValue((String) newValue)]);
                 }
                 return true;
             }

@@ -55,7 +55,7 @@ public class TracksFragment extends Fragment implements Preference.OnPreferenceC
     public boolean onPreferenceChange(Preference preference, Object newValue) {
         if (preference instanceof ListPreference) {
             ListPreference listPref = (ListPreference) preference;
-            preference.setSummary(listPref.getEntries()[listPref.findIndexOfValue((String)newValue)]);
+            preference.setSummary(listPref.getEntries()[listPref.findIndexOfValue((String) newValue)]);
         }
         return true;
     }

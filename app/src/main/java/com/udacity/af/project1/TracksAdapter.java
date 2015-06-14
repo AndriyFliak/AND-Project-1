@@ -28,7 +28,7 @@ class TracksAdapter extends ArrayAdapter<Track> {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = ((LayoutInflater)getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.list_item_track, null);
+            convertView = ((LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(R.layout.list_item_track, null);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
         } else {
