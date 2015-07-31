@@ -4,8 +4,8 @@
         <ListPreference
             android:defaultValue="US"
             android:dialogTitle="@string/country_setting_dialog"
-            android:entries="@array/country_entries"
-            android:entryValues="@array/country_values"
+            android:entries="@array/country_names"
+            android:entryValues="@array/country_codes"
             android:key="pref_country"
             android:title="@string/country_setting" />
     </PreferenceCategory>

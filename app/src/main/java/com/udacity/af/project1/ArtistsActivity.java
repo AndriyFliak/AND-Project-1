@@ -14,6 +14,8 @@ public class ArtistsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         setContentView(R.layout.activity_artists);
+
+        new SpotifyDbHelper(this).getWritableDatabase();
     }
 
     @Override

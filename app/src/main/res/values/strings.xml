@@ -7,7 +7,7 @@
     <string name="country_setting_dialog">Select country</string>
     <string name="no_results">No results</string>
 
-    <string-array name="country_entries">
+    <string-array name="country_names">
         <item>Andorra</item>
         <item>Argentina</item>
         <item>Australia</item>
@@ -68,7 +68,7 @@
         <item>Other</item>
     </string-array>
 
-    <string-array name="country_values">
+    <string-array name="country_codes">
         <item>AD</item>
         <item>AR</item>
         <item>AU</item>
