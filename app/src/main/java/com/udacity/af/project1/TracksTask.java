@@ -41,11 +41,9 @@ class TracksTask extends AsyncTask<Void, Void, ArrayList<Track>> {
         if (countryPref.equals("0")) {
             countryPref = "US";
         }
-        Map<String, Object> queryParams = new HashMap<>(1);
-        queryParams.put("country", countryPref);
         Tracks results;
         try {
-            results = new SpotifyApi().getService().getArtistTopTrack(mSpotifyId, queryParams);
+            results = new SpotifyApi().getService().getArtistTopTrack(mSpotifyId, countryPref);
         } catch (RetrofitError error) {
             return null;
         }
