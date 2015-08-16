@@ -1,14 +1,22 @@
 package com.udacity.af.project1;
 
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
+import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.NotificationCompat;
+
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,7 +30,6 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     static final String ACTION_PREVIOUS = "com.example.action.PREVIOUS";
     static final String ACTION_NEXT = "com.example.action.NEXT";
     static final String ACTION_STATS = "com.example.action.STATS";
-    static final String ACTION_STOP = "com.example.action.STOP";
 
     private ArrayList<Track> mTracks;
     private int mPosition;
@@ -42,6 +49,10 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     };
 
     public int onStartCommand(Intent intent, int flags, int startId) {
+        if (mTracks == null) {
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            notificationManager.cancelAll();
+        }
         if (intent == null || intent.getAction() == null) {
             return START_STICKY;
         }
@@ -63,6 +74,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
                     Intent newIntent = new Intent("PlayerUpdate");
                     newIntent.putExtra("paused", true);
                     LocalBroadcastManager.getInstance(this).sendBroadcast(newIntent);
+                    updateNotification();
                 } else {
                     mPlayer.start();
                     mHandler.removeCallbacks(mUpdateRunnable);
@@ -70,24 +82,29 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
                     Intent newIntent = new Intent("PlayerUpdate");
                     newIntent.putExtra("paused", false);
                     LocalBroadcastManager.getInstance(this).sendBroadcast(newIntent);
+                    updateNotification();
                 }
             }
         } else if (intent.getAction().equals(ACTION_STATS)) {
             sendStats();
-        } else if (intent.getAction().equals(ACTION_PREVIOUS)) {
-            mPosition = mPosition - 1;
-            if (mPosition < 0) {
-                mPosition = mTracks.size() - 1;
+        } else if (intent.getAction().equals(ACTION_PREVIOUS) && mTracks != null) {
+            if (mTracks != null) {
+                mPosition = mPosition - 1;
+                if (mPosition < 0) {
+                    mPosition = mTracks.size() - 1;
+                }
+                start();
+                sendStats();
             }
-            start();
-            sendStats();
         } else if (intent.getAction().equals(ACTION_NEXT)) {
-            mPosition = mPosition + 1;
-            if (mPosition >= mTracks.size()) {
-                mPosition = 0;
+            if (mTracks != null) {
+                mPosition = mPosition + 1;
+                if (mPosition >= mTracks.size()) {
+                    mPosition = 0;
+                }
+                start();
+                sendStats();
             }
-            start();
-            sendStats();
         }
         return START_STICKY;
     }
@@ -118,6 +135,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
             e.printStackTrace();
         }
         mPlayer.prepareAsync();
+        updateNotification();
     }
 
     public void sendStats() {
@@ -140,6 +158,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         player.start();
         mHandler.removeCallbacks(mUpdateRunnable);
         sendStats();
+        updateNotification();
         mHandler.post(mUpdateRunnable);
     }
 
@@ -167,5 +186,47 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         }
         start();
         sendStats();
+    }
+
+    public void updateNotification() {
+        final Intent serviceIntent = new Intent(this, MediaPlayerService.class);
+        final PendingIntent prevPendingIntent = PendingIntent.getService(this, 0, serviceIntent.setAction(MediaPlayerService.ACTION_PREVIOUS),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        final PendingIntent playPausePendingIntent = PendingIntent.getService(this, 0, serviceIntent.setAction(MediaPlayerService.ACTION_PLAY_PAUSE),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+        final PendingIntent nextPendingIntent = PendingIntent.getService(this, 0, serviceIntent.setAction(MediaPlayerService.ACTION_NEXT),
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        final HandlerThread thread = new HandlerThread("thread");
+        thread.start();
+        Handler handler = new Handler(thread.getLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(MediaPlayerService.this);
+                    notificationBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                            .setSmallIcon(android.R.drawable.ic_media_play)
+                            .addAction(android.R.drawable.ic_media_previous, "Previous", prevPendingIntent);
+                    if (mPlayer.isPlaying()) {
+                        notificationBuilder.addAction(android.R.drawable.ic_media_pause, "Pause", playPausePendingIntent);
+                    } else {
+                        notificationBuilder.addAction(android.R.drawable.ic_media_play, "Play", playPausePendingIntent);
+                    }
+                    notificationBuilder.addAction(android.R.drawable.ic_media_next, "Next", nextPendingIntent)
+                            .setStyle(new NotificationCompat.MediaStyle().setShowActionsInCompactView(0, 1, 2))
+                            .setContentTitle(mTracks.get(mPosition).getTrackName())
+                            .setContentText(mTracks.get(mPosition).getArtistName());
+                    Bitmap cover = Picasso.with(MediaPlayerService.this).load(mTracks.get(mPosition).getImageUrlLarge()).get();
+                    notificationBuilder.setLargeIcon(cover);
+                    NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                    notificationManager.notify(1, notificationBuilder.build());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    thread.quit();
+                }
+            }
+        });
     }
 }
