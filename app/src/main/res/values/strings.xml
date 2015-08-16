@@ -6,6 +6,7 @@
     <string name="country_setting">Country</string>
     <string name="country_setting_dialog">Select country</string>
     <string name="no_results">No results</string>
+    <string name="action_now_playing">Now Playing</string>
 
     <string-array name="country_entries">
         <item>Andorra</item>

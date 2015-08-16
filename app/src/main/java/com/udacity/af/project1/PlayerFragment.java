@@ -94,7 +94,7 @@ public class PlayerFragment extends DialogFragment implements SeekBar.OnSeekBarC
             getActivity().startService(serviceIntent);
         } else if (mTracks != null) {
             setTrack(mTracks, mPosition);
-        } else {
+        } else if (getActivity().getIntent().hasExtra("tracks")) {
             ArrayList<Track> tracks = getActivity().getIntent().getParcelableArrayListExtra("tracks");
             int position = getActivity().getIntent().getIntExtra("position", 0);
             setTrack(tracks, position);
@@ -184,7 +184,7 @@ public class PlayerFragment extends DialogFragment implements SeekBar.OnSeekBarC
     @Override
     public void onDestroyView() {
         if (getDialog() != null && getRetainInstance()) {
-            getDialog().setOnDismissListener(null);
+            getDialog().setDismissMessage(null);
         }
         super.onDestroyView();
     }
