@@ -37,7 +37,7 @@ public class Artist implements Parcelable {
         dest.writeStringArray(new String[] {mSpotifyId, mName, mImageUrl});
     }
 
-    private Artist(Parcel in){
+    private Artist(Parcel in) {
         String[] data = new String[3];
         in.readStringArray(data);
         mSpotifyId = data[0];

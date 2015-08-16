@@ -6,6 +6,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.PowerManager;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 
@@ -109,6 +110,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
         mPlayer.setOnPreparedListener(this);
         mPlayer.setOnCompletionListener(this);
         mPlayer.setOnSeekCompleteListener(this);
+        mPlayer.setWakeMode(this, PowerManager.PARTIAL_WAKE_LOCK);
         String url = mTracks.get(mPosition).getPreviewUrl();
         try {
             mPlayer.setDataSource(url);
