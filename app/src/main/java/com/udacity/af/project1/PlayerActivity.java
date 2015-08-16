@@ -14,7 +14,6 @@ public class PlayerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_player);
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
