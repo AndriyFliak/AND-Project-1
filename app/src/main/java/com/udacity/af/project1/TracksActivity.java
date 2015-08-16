@@ -22,7 +22,7 @@ public class TracksActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tracks);
 
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().add(R.id.fragment_tracks_container, new TracksFragment()).commit();
+            getFragmentManager().beginTransaction().add(R.id.fragment_tracks_container, new TracksFragment()).commit();
         }
 
         Artist artist = getIntent().getParcelableExtra("artist");

@@ -1,9 +1,9 @@
 package com.udacity.af.project1;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +41,7 @@ public class ArtistsFragment extends Fragment implements ArtistsTask.Callbacks {
     public void launchTracksActivity(ListView artistsList, int position) {
         Artist artist = ((ArtistsAdapter) artistsList.getAdapter()).getArtists().get(position);
         if (ArtistsActivity.mTwoPane) {
-            ((TracksFragment)getActivity().getSupportFragmentManager().findFragmentByTag(TracksFragment.TAG)).onArtistSelected(artist);
+            ((TracksFragment)getActivity().getFragmentManager().findFragmentByTag(TracksFragment.TAG)).onArtistSelected(artist);
         } else {
             Intent intent = new Intent(getActivity(), TracksActivity.class);
             intent.putExtra("artist", artist);

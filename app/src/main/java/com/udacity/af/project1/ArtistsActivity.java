@@ -20,7 +20,7 @@ public class ArtistsActivity extends AppCompatActivity {
         if (findViewById(R.id.fragment_tracks_container) != null) {
             mTwoPane = true;
             if (savedInstanceState == null) {
-                getSupportFragmentManager().beginTransaction()
+                getFragmentManager().beginTransaction()
                         .replace(R.id.fragment_tracks_container, new TracksFragment(), TracksFragment.TAG)
                         .commit();
             }

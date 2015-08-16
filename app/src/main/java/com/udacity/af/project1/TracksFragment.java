@@ -1,9 +1,9 @@
 package com.udacity.af.project1;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +24,7 @@ public class TracksFragment extends Fragment implements TracksTask.Callbacks {
     @OnItemClick(R.id.tracks_list_view)
     public void playSong(ListView tracksList, int position) {
         if (ArtistsActivity.mTwoPane) {
-            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            FragmentManager fragmentManager = getActivity().getFragmentManager();
             PlayerFragment playerFragment = new PlayerFragment();
             playerFragment.onTrackSelected(((TracksAdapter) tracksList.getAdapter()).getTracks(), position);
             playerFragment.show(fragmentManager, "dialog");
