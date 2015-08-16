@@ -28,17 +28,27 @@ import butterknife.OnClick;
 
 public class PlayerFragment extends Fragment implements SeekBar.OnSeekBarChangeListener {
 
-    private ArrayList<Track> mTracks;
-    private int mPosition;
-
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            if (intent.hasExtra("track")) {
+                Track track = intent.getParcelableExtra("track");
+                mArtist.setText(track.getArtistName());
+                mAlbumName.setText(track.getAlbumName());
+                Picasso.with(getActivity()).load(track.getImageUrlLarge()).into(mAlbumCover);
+                mTrackName.setText(track.getTrackName());
+                mTrackSeekBar.setOnSeekBarChangeListener(PlayerFragment.this);
+            }
             if (intent.hasExtra("duration")) {
-                SimpleDateFormat sdf = new SimpleDateFormat("mm:ss", Locale.US);
-                mTrackDuration.setText(sdf.format(new Date(intent.getIntExtra("duration", 0))));
-                mTrackSeekBar.setMax(intent.getIntExtra("duration", 0));
-                mPlayPauseButton.setImageResource(android.R.drawable.ic_media_pause);
+                int duration = intent.getIntExtra("duration", 0);
+                if (duration == -1) {
+                    mTrackDuration.setText("");
+                } else {
+                    SimpleDateFormat sdf = new SimpleDateFormat("mm:ss", Locale.US);
+                    mTrackDuration.setText(sdf.format(new Date(intent.getIntExtra("duration", 0))));
+                    mTrackSeekBar.setMax(intent.getIntExtra("duration", 0));
+                    mPlayPauseButton.setImageResource(android.R.drawable.ic_media_pause);
+                }
             }
             if (intent.hasExtra("paused")) {
                 if (intent.getBooleanExtra("paused", true)) {
@@ -52,9 +62,6 @@ public class PlayerFragment extends Fragment implements SeekBar.OnSeekBarChangeL
                 int progress = intent.getIntExtra("seek_position", 0);
                 mTrackSeekBar.setProgress(progress);
                 mTrackProgress.setText(sdf.format(new Date(progress)));
-            }
-            if (intent.hasExtra("finish")) {
-                nextTrack();
             }
         }
     };
@@ -72,20 +79,18 @@ public class PlayerFragment extends Fragment implements SeekBar.OnSeekBarChangeL
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setRetainInstance(true);
 
-        boolean start = true;
-        if (savedInstanceState != null) {
-            mTracks = savedInstanceState.getParcelableArrayList("tracks");
-            mPosition = savedInstanceState.getInt("position");
-            start = false;
-        } else {
-            mTracks = getActivity().getIntent().getParcelableArrayListExtra("tracks");
-            mPosition = getActivity().getIntent().getIntExtra("position", 0);
-        }
-
         View view = inflater.inflate(R.layout.fragment_player, container, false);
         ButterKnife.inject(this, view);
 
-        changeTrack(start);
+        if (savedInstanceState != null) {
+            Intent serviceIntent = new Intent(getActivity(), MediaPlayerService.class);
+            serviceIntent.setAction(MediaPlayerService.ACTION_STATS);
+            getActivity().startService(serviceIntent);
+        } else {
+            ArrayList<Track> tracks = getActivity().getIntent().getParcelableArrayListExtra("tracks");
+            int position = getActivity().getIntent().getIntExtra("position", 0);
+            setTrack(tracks, position);
+        }
 
         return view;
     }
@@ -100,42 +105,12 @@ public class PlayerFragment extends Fragment implements SeekBar.OnSeekBarChangeL
         getActivity().startService(serviceIntent);
     }
 
-    public void changeTrack() {
-        changeTrack(true);
-    }
-
-    public void changeTrack(boolean start) {
-        mArtist.setText(mTracks.get(mPosition).getArtistName());
-        mAlbumName.setText(mTracks.get(mPosition).getAlbumName());
-        Picasso.with(getActivity()).load(mTracks.get(mPosition).getImageUrlLarge()).into(mAlbumCover);
-        mTrackName.setText(mTracks.get(mPosition).getTrackName());
-
-        mTrackSeekBar.setOnSeekBarChangeListener(this);
-
-        if (start) {
-            mTrackSeekBar.setProgress(0);
-            mTrackProgress.setText("00:00");
-            mTrackDuration.setText("");
-            String url = mTracks.get(mPosition).getPreviewUrl();
-            Intent serviceIntent = new Intent(getActivity(), MediaPlayerService.class);
-            serviceIntent.setAction(MediaPlayerService.ACTION_START);
-            serviceIntent.putExtra("url", url);
-            getActivity().startService(serviceIntent);
-        } else {
-            Intent serviceIntent = new Intent(getActivity(), MediaPlayerService.class);
-            serviceIntent.setAction(MediaPlayerService.ACTION_STATS);
-            getActivity().startService(serviceIntent);
-        }
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        if (mTracks != null) {
-            savedInstanceState.putParcelableArrayList("tracks", mTracks);
-            savedInstanceState.putInt("position", mPosition);
-            savedInstanceState.putInt("position", mPosition);
-        }
+    public void setTrack(ArrayList<Track> tracks, int position) {
+        Intent serviceIntent = new Intent(getActivity(), MediaPlayerService.class);
+        serviceIntent.setAction(MediaPlayerService.ACTION_START);
+        serviceIntent.putParcelableArrayListExtra("tracks", tracks);
+        serviceIntent.putExtra("position", position);
+        getActivity().startService(serviceIntent);
     }
 
     @OnClick(R.id.play_pause)
@@ -147,25 +122,21 @@ public class PlayerFragment extends Fragment implements SeekBar.OnSeekBarChangeL
 
     @OnClick(R.id.previous_track)
     public void previousTrack() {
-        mPosition = mPosition - 1;
-        if (mPosition < 0) {
-            mPosition = mTracks.size() - 1;
-        }
-        changeTrack();
+        Intent serviceIntent = new Intent(getActivity(), MediaPlayerService.class);
+        serviceIntent.setAction(MediaPlayerService.ACTION_PREVIOUS);
+        getActivity().startService(serviceIntent);
     }
 
     @OnClick(R.id.next_track)
     public void nextTrack() {
-        mPosition = mPosition + 1;
-        if (mPosition >= mTracks.size()) {
-            mPosition = 0;
-        }
-        changeTrack();
+        Intent serviceIntent = new Intent(getActivity(), MediaPlayerService.class);
+        serviceIntent.setAction(MediaPlayerService.ACTION_NEXT);
+        getActivity().startService(serviceIntent);
     }
 
     @Override
     public void onPause() {
-        super.onStop();
+        super.onPause();
         LocalBroadcastManager.getInstance(getActivity()).unregisterReceiver(mMessageReceiver);
     }
 
