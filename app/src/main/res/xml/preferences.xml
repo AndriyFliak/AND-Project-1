@@ -8,5 +8,10 @@
             android:entryValues="@array/country_values"
             android:key="pref_country"
             android:title="@string/country_setting" />
+
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="pref_notification"
+            android:title="@string/notification_setting" />
     </PreferenceCategory>
 </PreferenceScreen>

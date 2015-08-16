@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -12,6 +13,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.NotificationCompat;
@@ -30,6 +32,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     static final String ACTION_PREVIOUS = "com.example.action.PREVIOUS";
     static final String ACTION_NEXT = "com.example.action.NEXT";
     static final String ACTION_STATS = "com.example.action.STATS";
+    static final String ACTION_NOTIFICATION = "com.example.action.NOTIFICATION";
 
     private ArrayList<Track> mTracks;
     private int mPosition;
@@ -87,6 +90,8 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
             }
         } else if (intent.getAction().equals(ACTION_STATS)) {
             sendStats();
+        } else if (intent.getAction().equals(ACTION_NOTIFICATION)) {
+            updateNotification();
         } else if (intent.getAction().equals(ACTION_PREVIOUS) && mTracks != null) {
             if (mTracks != null) {
                 mPosition = mPosition - 1;
@@ -189,6 +194,12 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     }
 
     public void updateNotification() {
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean notificationPref = sharedPref.getBoolean("pref_notification", true);
+        if (!notificationPref) {
+            return;
+        }
+
         final Intent serviceIntent = new Intent(this, MediaPlayerService.class);
         final PendingIntent prevPendingIntent = PendingIntent.getService(this, 0, serviceIntent.setAction(MediaPlayerService.ACTION_PREVIOUS),
                 PendingIntent.FLAG_UPDATE_CURRENT);
