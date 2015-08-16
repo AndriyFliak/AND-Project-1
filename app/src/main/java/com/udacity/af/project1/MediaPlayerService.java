@@ -196,7 +196,7 @@ public class MediaPlayerService extends Service implements MediaPlayer.OnPrepare
     public void updateNotification() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         boolean notificationPref = sharedPref.getBoolean("pref_notification", true);
-        if (!notificationPref) {
+        if (!notificationPref || mPlayer == null) {
             return;
         }
 

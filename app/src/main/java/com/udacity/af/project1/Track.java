@@ -11,14 +11,16 @@ public class Track implements Parcelable {
     private final String mImageUrlLarge;
     private final String mImageUrlSmall;
     private final String mPreviewUrl;
+    private final String mId;
 
-    Track(String artist, String trackName, String albumName, String imageUrlLarge, String imageUrlSmall, String previewUrl) {
+    Track(String artist, String trackName, String albumName, String imageUrlLarge, String imageUrlSmall, String previewUrl, String id) {
         mArtistName = artist;
         mTrackName = trackName;
         mAlbumName = albumName;
         mImageUrlLarge = imageUrlLarge;
         mImageUrlSmall = imageUrlSmall;
         mPreviewUrl = previewUrl;
+        mId = id;
     }
 
     public String getArtistName() {
@@ -45,6 +47,10 @@ public class Track implements Parcelable {
         return mPreviewUrl;
     }
 
+    public String getUrl() {
+        return String.format("http://open.spotify.com/track/%s", mId);
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -52,11 +58,11 @@ public class Track implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeStringArray(new String[]{mArtistName, mTrackName, mAlbumName, mImageUrlLarge, mImageUrlSmall, mPreviewUrl});
+        dest.writeStringArray(new String[]{mArtistName, mTrackName, mAlbumName, mImageUrlLarge, mImageUrlSmall, mPreviewUrl, mId});
     }
 
     private Track(Parcel in) {
-        String[] data = new String[6];
+        String[] data = new String[7];
         in.readStringArray(data);
         mArtistName = data[0];
         mTrackName = data[1];
@@ -64,6 +70,7 @@ public class Track implements Parcelable {
         mImageUrlLarge = data[3];
         mImageUrlSmall = data[4];
         mPreviewUrl = data[5];
+        mId = data[6];
     }
 
     public static final Parcelable.Creator<Track> CREATOR = new Parcelable.Creator<Track>() {

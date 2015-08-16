@@ -8,6 +8,7 @@
     <string name="notification_setting">Notification controls</string>
     <string name="no_results">No results</string>
     <string name="action_now_playing">Now Playing</string>
+    <string name="action_share">Share</string>
 
     <string-array name="country_entries">
         <item>Andorra</item>

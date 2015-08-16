@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.ShareActionProvider;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,12 +23,24 @@ public class TracksActivity extends AppCompatActivity {
     @InjectView(R.id.artist_name) TextView artistName;
 
     private boolean mNowPlayingVisible = false;
+    private ShareActionProvider mShareActionProvider;
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (intent.hasExtra("paused")) {
                 mNowPlayingVisible = !intent.getBooleanExtra("paused", true);
                 invalidateOptionsMenu();
+            }
+            if (intent.hasExtra("track")) {
+                if (mShareActionProvider != null) {
+                    Track track = intent.getParcelableExtra("track");
+                    Intent sendIntent = new Intent();
+                    sendIntent.setAction(Intent.ACTION_SEND);
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, String.format("I'm listening to %s by %s %s",
+                            track.getTrackName(), track.getArtistName(), track.getUrl()));
+                    sendIntent.setType("text/plain");
+                    mShareActionProvider.setShareIntent(sendIntent);
+                }
             }
         }
     };
@@ -70,7 +84,9 @@ public class TracksActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        menu.getItem(0).setVisible(mNowPlayingVisible);
+        menu.findItem(R.id.action_now_playing).setVisible(mNowPlayingVisible);
+        menu.findItem(R.id.action_share).setVisible(mNowPlayingVisible);
+        mShareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(menu.findItem(R.id.action_share));
         return true;
     }
 

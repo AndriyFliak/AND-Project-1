@@ -70,7 +70,7 @@ class TracksTask extends AsyncTask<Void, Void, ArrayList<Track>> {
                     imageUrlSmall = track.album.images.get(track.album.images.size() - 1).url;
                 }
             }
-            tracksList.add(new Track(mArtist.getName(), track.name, track.album.name, imageUrlLarge, imageUrlSmall, track.preview_url));
+            tracksList.add(new Track(mArtist.getName(), track.name, track.album.name, imageUrlLarge, imageUrlSmall, track.preview_url, track.id));
         }
 
         return tracksList;
