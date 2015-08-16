@@ -6,9 +6,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.models.Image;
@@ -23,12 +21,12 @@ class TracksTask extends AsyncTask<Void, Void, ArrayList<Track>> {
 
     private final Activity mActivity;
     private final Callbacks mCallbacks;
-    private final String mSpotifyId;
+    private final Artist mArtist;
 
-    TracksTask(Activity activity, Callbacks callbacks, String spotifyId) {
+    TracksTask(Activity activity, Callbacks callbacks, Artist artist) {
         mActivity = activity;
         mCallbacks = callbacks;
-        mSpotifyId = spotifyId;
+        mArtist = artist;
     }
 
     @Override
@@ -43,7 +41,7 @@ class TracksTask extends AsyncTask<Void, Void, ArrayList<Track>> {
         }
         Tracks results;
         try {
-            results = new SpotifyApi().getService().getArtistTopTrack(mSpotifyId, countryPref);
+            results = new SpotifyApi().getService().getArtistTopTrack(mArtist.getSpotifyId(), countryPref);
         } catch (RetrofitError error) {
             return null;
         }
@@ -72,7 +70,7 @@ class TracksTask extends AsyncTask<Void, Void, ArrayList<Track>> {
                     imageUrlSmall = track.album.images.get(track.album.images.size() - 1).url;
                 }
             }
-            tracksList.add(new Track(track.name, track.album.name, imageUrlLarge, imageUrlSmall, track.preview_url));
+            tracksList.add(new Track(mArtist.getName(), track.name, track.album.name, imageUrlLarge, imageUrlSmall, track.preview_url));
         }
 
         return tracksList;

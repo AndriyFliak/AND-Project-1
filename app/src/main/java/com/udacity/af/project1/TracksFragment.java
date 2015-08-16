@@ -1,5 +1,6 @@
 package com.udacity.af.project1;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -18,8 +19,11 @@ public class TracksFragment extends Fragment implements TracksTask.Callbacks {
 
     @InjectView(R.id.tracks_list_view) ListView tracksList;
     @OnItemClick(R.id.tracks_list_view)
-    public void playSong() {
-        Toast.makeText(getActivity(), "Playing song", Toast.LENGTH_SHORT).show();
+    public void playSong(ListView tracksList, int position) {
+        Intent intent = new Intent(getActivity(), PlayerActivity.class);
+        intent.putParcelableArrayListExtra("tracks", ((TracksAdapter) tracksList.getAdapter()).getTracks());
+        intent.putExtra("position", position);
+        getActivity().startActivity(intent);
     }
 
     @Override
@@ -37,7 +41,7 @@ public class TracksFragment extends Fragment implements TracksTask.Callbacks {
                 tracksList.setAdapter(adapter);
             }
         } else {
-            new TracksTask(getActivity(), this, artist.getSpotifyId()).execute();
+            new TracksTask(getActivity(), this, artist).execute();
         }
 
         return view;

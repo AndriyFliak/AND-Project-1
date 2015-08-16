@@ -5,18 +5,24 @@ import android.os.Parcelable;
 
 public class Track implements Parcelable {
 
+    private final String mArtistName;
     private final String mTrackName;
     private final String mAlbumName;
     private final String mImageUrlLarge;
     private final String mImageUrlSmall;
     private final String mPreviewUrl;
 
-    Track(String trackName, String albumName, String imageUrlLarge, String imageUrlSmall, String previewUrl) {
+    Track(String artist, String trackName, String albumName, String imageUrlLarge, String imageUrlSmall, String previewUrl) {
+        mArtistName = artist;
         mTrackName = trackName;
         mAlbumName = albumName;
         mImageUrlLarge = imageUrlLarge;
         mImageUrlSmall = imageUrlSmall;
         mPreviewUrl = previewUrl;
+    }
+
+    public String getArtistName() {
+        return mArtistName;
     }
 
     public String getTrackName() {
@@ -46,17 +52,18 @@ public class Track implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeStringArray(new String[] { mTrackName, mAlbumName, mImageUrlLarge, mImageUrlSmall, mPreviewUrl } );
+        dest.writeStringArray(new String[]{mArtistName, mTrackName, mAlbumName, mImageUrlLarge, mImageUrlSmall, mPreviewUrl});
     }
 
-    private Track(Parcel in){
-        String[] data = new String[5];
+    private Track(Parcel in) {
+        String[] data = new String[6];
         in.readStringArray(data);
-        mTrackName = data[0];
-        mAlbumName = data[1];
-        mImageUrlLarge = data[2];
-        mImageUrlSmall = data[3];
-        mPreviewUrl = data[4];
+        mArtistName = data[0];
+        mTrackName = data[1];
+        mAlbumName = data[2];
+        mImageUrlLarge = data[3];
+        mImageUrlSmall = data[4];
+        mPreviewUrl = data[5];
     }
 
     public static final Parcelable.Creator<Track> CREATOR = new Parcelable.Creator<Track>() {
