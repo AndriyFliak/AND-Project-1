@@ -40,8 +40,8 @@ public class ArtistsFragment extends Fragment implements ArtistsTask.Callbacks {
     @OnItemClick(R.id.artists_list_view)
     public void launchTracksActivity(ListView artistsList, int position) {
         Artist artist = ((ArtistsAdapter) artistsList.getAdapter()).getArtists().get(position);
-        if (((ArtistsActivity) getActivity()).mTwoPane) {
-            ((TracksFragment)getActivity().getSupportFragmentManager().findFragmentByTag(TracksFragment.TAG)).onTrackSelected(artist);
+        if (ArtistsActivity.mTwoPane) {
+            ((TracksFragment)getActivity().getSupportFragmentManager().findFragmentByTag(TracksFragment.TAG)).onArtistSelected(artist);
         } else {
             Intent intent = new Intent(getActivity(), TracksActivity.class);
             intent.putExtra("artist", artist);

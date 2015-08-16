@@ -9,7 +9,7 @@ import android.view.MenuItem;
 
 public class ArtistsActivity extends AppCompatActivity {
 
-    boolean mTwoPane = false;
+    static boolean mTwoPane = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

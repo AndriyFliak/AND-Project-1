@@ -3,6 +3,7 @@ package com.udacity.af.project1;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,10 +23,17 @@ public class TracksFragment extends Fragment implements TracksTask.Callbacks {
     @InjectView(R.id.tracks_list_view) ListView tracksList;
     @OnItemClick(R.id.tracks_list_view)
     public void playSong(ListView tracksList, int position) {
-        Intent intent = new Intent(getActivity(), PlayerActivity.class);
-        intent.putParcelableArrayListExtra("tracks", ((TracksAdapter) tracksList.getAdapter()).getTracks());
-        intent.putExtra("position", position);
-        getActivity().startActivity(intent);
+        if (ArtistsActivity.mTwoPane) {
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            PlayerFragment playerFragment = new PlayerFragment();
+            playerFragment.onTrackSelected(((TracksAdapter) tracksList.getAdapter()).getTracks(), position);
+            playerFragment.show(fragmentManager, "dialog");
+        } else {
+            Intent intent = new Intent(getActivity(), PlayerActivity.class);
+            intent.putParcelableArrayListExtra("tracks", ((TracksAdapter) tracksList.getAdapter()).getTracks());
+            intent.putExtra("position", position);
+            getActivity().startActivity(intent);
+        }
     }
 
     @Override
@@ -52,7 +60,7 @@ public class TracksFragment extends Fragment implements TracksTask.Callbacks {
         return view;
     }
 
-    public void onTrackSelected(Artist artist) {
+    public void onArtistSelected(Artist artist) {
         new TracksTask(getActivity(), this, artist).execute();
     }
 

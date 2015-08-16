@@ -1,15 +1,18 @@
 package com.udacity.af.project1;
 
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -26,7 +29,10 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-public class PlayerFragment extends Fragment implements SeekBar.OnSeekBarChangeListener {
+public class PlayerFragment extends DialogFragment implements SeekBar.OnSeekBarChangeListener {
+
+    private ArrayList<Track> mTracks;
+    private int mPosition;
 
     private BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
         @Override
@@ -86,6 +92,8 @@ public class PlayerFragment extends Fragment implements SeekBar.OnSeekBarChangeL
             Intent serviceIntent = new Intent(getActivity(), MediaPlayerService.class);
             serviceIntent.setAction(MediaPlayerService.ACTION_STATS);
             getActivity().startService(serviceIntent);
+        } else if (mTracks != null) {
+            setTrack(mTracks, mPosition);
         } else {
             ArrayList<Track> tracks = getActivity().getIntent().getParcelableArrayListExtra("tracks");
             int position = getActivity().getIntent().getIntExtra("position", 0);
@@ -93,6 +101,19 @@ public class PlayerFragment extends Fragment implements SeekBar.OnSeekBarChangeL
         }
 
         return view;
+    }
+
+    public void onTrackSelected(ArrayList<Track> tracks, int position) {
+        mTracks = tracks;
+        mPosition = position;
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        return dialog;
     }
 
     @Override
@@ -158,5 +179,13 @@ public class PlayerFragment extends Fragment implements SeekBar.OnSeekBarChangeL
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
 
+    }
+
+    @Override
+    public void onDestroyView() {
+        if (getDialog() != null && getRetainInstance()) {
+            getDialog().setOnDismissListener(null);
+        }
+        super.onDestroyView();
     }
 }
