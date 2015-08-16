@@ -17,6 +17,8 @@ import butterknife.OnItemClick;
 
 public class TracksFragment extends Fragment implements TracksTask.Callbacks {
 
+    static final String TAG = "TracksFragment";
+
     @InjectView(R.id.tracks_list_view) ListView tracksList;
     @OnItemClick(R.id.tracks_list_view)
     public void playSong(ListView tracksList, int position) {
@@ -33,7 +35,6 @@ public class TracksFragment extends Fragment implements TracksTask.Callbacks {
         View view = inflater.inflate(R.layout.fragment_tracks, container, false);
         ButterKnife.inject(this, view);
 
-        Artist artist = getActivity().getIntent().getParcelableExtra("artist");
         if (savedInstanceState != null) {
             ArrayList<Track> tracks = savedInstanceState.getParcelableArrayList("tracks");
             if (tracks != null) {
@@ -41,10 +42,18 @@ public class TracksFragment extends Fragment implements TracksTask.Callbacks {
                 tracksList.setAdapter(adapter);
             }
         } else {
+            if (!getActivity().getIntent().hasExtra("artist")) {
+                return view;
+            }
+            Artist artist = getActivity().getIntent().getParcelableExtra("artist");
             new TracksTask(getActivity(), this, artist).execute();
         }
 
         return view;
+    }
+
+    public void onTrackSelected(Artist artist) {
+        new TracksTask(getActivity(), this, artist).execute();
     }
 
     @Override

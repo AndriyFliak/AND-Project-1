@@ -22,6 +22,8 @@ import butterknife.OnItemClick;
 
 public class ArtistsFragment extends Fragment implements ArtistsTask.Callbacks {
 
+    private boolean mTwoPane = false;
+
     @OnEditorAction(R.id.artist_name_edit_text)
     public boolean findArtists(TextView v, int actionId) {
         if (actionId == EditorInfo.IME_ACTION_DONE) {
@@ -37,9 +39,14 @@ public class ArtistsFragment extends Fragment implements ArtistsTask.Callbacks {
     @InjectView(R.id.artists_list_view) ListView artistsList;
     @OnItemClick(R.id.artists_list_view)
     public void launchTracksActivity(ListView artistsList, int position) {
-        Intent intent = new Intent(getActivity(), TracksActivity.class);
-        intent.putExtra("artist", ((ArtistsAdapter) artistsList.getAdapter()).getArtists().get(position));
-        getActivity().startActivity(intent);
+        Artist artist = ((ArtistsAdapter) artistsList.getAdapter()).getArtists().get(position);
+        if (((ArtistsActivity) getActivity()).mTwoPane) {
+            ((TracksFragment)getActivity().getSupportFragmentManager().findFragmentByTag(TracksFragment.TAG)).onTrackSelected(artist);
+        } else {
+            Intent intent = new Intent(getActivity(), TracksActivity.class);
+            intent.putExtra("artist", artist);
+            getActivity().startActivity(intent);
+        }
     }
 
     @Override

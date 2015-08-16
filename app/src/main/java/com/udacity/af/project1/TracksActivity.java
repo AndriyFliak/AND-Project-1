@@ -21,6 +21,10 @@ public class TracksActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tracks);
 
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction().add(R.id.fragment_tracks_container, new TracksFragment()).commit();
+        }
+
         Artist artist = getIntent().getParcelableExtra("artist");
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {

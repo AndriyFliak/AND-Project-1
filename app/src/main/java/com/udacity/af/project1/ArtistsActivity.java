@@ -9,11 +9,24 @@ import android.view.MenuItem;
 
 public class ArtistsActivity extends AppCompatActivity {
 
+    boolean mTwoPane = false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         setContentView(R.layout.activity_artists);
+
+        if (findViewById(R.id.fragment_tracks_container) != null) {
+            mTwoPane = true;
+            if (savedInstanceState == null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_tracks_container, new TracksFragment(), TracksFragment.TAG)
+                        .commit();
+            }
+        } else {
+            mTwoPane = false;
+        }
     }
 
     @Override
